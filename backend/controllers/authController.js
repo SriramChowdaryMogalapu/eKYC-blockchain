@@ -202,6 +202,7 @@ exports.uploadFiKyc = async (req, res) => {
     fiuser.verifyRequests.push(username);
     await user.save();
     await fiuser.save();
+    //Adding into Hyperledger Fabric Blockchain's Ledger
     await addKYCRecord(username, fullName, phonenumber, aadharnumber, ipfsHash);
     res.status(201).json({ uploaded: "Successful!" });
   } catch (error) {
@@ -244,6 +245,7 @@ exports.uploadUserKyc = async (req, res) => {
     fiuser.verifyRequests.push(username);
     await user.save();
     await fiuser.save();
+    //Adding into Hyperledger Fabric Blockchain's Ledger
     await addKYCRecord(username, fullName, phonenumber, aadharnumber, ipfsHash);
     console.log("Request Successful!!");
     res.status(201).json({ uploaded: "Successful!" });
@@ -273,6 +275,7 @@ exports.requestAccess = async (req, res) => {
     fiuser.sentAccessRequests.push(username);
     await user.save();
     await fiuser.save();
+    //Adding into Hyperledger Fabric Blockchain's Ledger
     await recordAccessRequest(username, fiusername, 'Access Requested');
     res.status(201).json({ uploaded: "Access request sent successfully!" });
   } catch (error) {
@@ -300,6 +303,7 @@ exports.requestVerification = async (req, res) => {
     user.sentRequests.push(fiusername);
     await user.save();
     await fiuser.save();
+    //Adding into Hyperledger Fabric Blockchain's Ledger
     await fabricHelper.recordAccessRequest(username, fiusername, 'Ekyc Request');
     res.status(201).json({ uploaded: "Successful!" });
   }
@@ -324,6 +328,7 @@ exports.acceptRequest = async (req, res) => {
     user.acceptedRequests.push(fiusername);
     console.log(user.accessRequests);
     user.accessRequests = user.accessRequests.filter(item => item !== fiusername);
+    //Adding into Hyperledger Fabric Blockchain's Ledger
     await fabricHelper.recordAccessRequest(username, fiusername, 'Accepted Request');
     console.log(user);
     await user.save();
@@ -365,6 +370,7 @@ exports.verifyRequest = async (req, res) => {
     console.log(user.verificationId);
     await user.save();
     await fiuser.save();
+    //Updating Hyperledger Fabric Blockchain's Ledger
     await updateKYCStatus(username,fiusername, "Verified");
     res.status(201).json({
       message: "Accepted",
@@ -394,6 +400,7 @@ exports.rejectAccessRequest = async (req, res) => {
     user.accessRequests = user.accessRequests.filter(item => item.username !== fiusername);
     await user.save();
     await fiuser.save();
+    //Updating Hyperledger Fabric Blockchain's Ledger
     await updateKYCStatus(username, fiusername, 'Rejected');
     res.status(201).json({ Accepted: "Accepted" });
   }
@@ -420,6 +427,7 @@ exports.rejectRequest = async (req, res) => {
     fiuser.verifyRequests = fiuser.verifyRequests.filter(item => item !== m);
     await user.save();
     await fiuser.save();
+    //Updating Hyperledger Fabric Blockchain's Ledger
     await updateKYCStatus(username,fiusername, "Rejected");
     res.status(201).json({ Rejected: "Rejected" });
   }
